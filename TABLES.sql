@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS SaleDetails (
 CREATE TABLE IF NOT EXISTS Inventory (
     InventoryID SERIAL PRIMARY KEY,
     ProductID INT NOT NULL,
+    ProductName VARCHAR(100) NOT NULL,
     SupplierID INT NOT NULL,
     QuantityReceived INT NOT NULL,
     ReceiveDate DATE NOT NULL,
