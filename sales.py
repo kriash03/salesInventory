@@ -28,8 +28,8 @@ def insert_customers(cursor):
 def insert_sales(cursor, customer_ids):
     sale_data = []
     for customer_id in customer_ids:
-        sale_date = input(f"Enter Sale Date (YYYY-MM-DD) for CustomerID {customer_id}: ")
-        total_amount = float(input(f"Enter Total Amount for CustomerID {customer_id}: "))
+        sale_date = datetime.now()
+        total_amount = 0.0  # Will be calculated based on products sold
         sale_data.append((sale_date, customer_id, total_amount))
     
     insert_sale_query = """
@@ -46,12 +46,35 @@ def insert_sales(cursor, customer_ids):
     
     return sale_ids
 
-def insert_sale_details(cursor, sale_ids, product_ids):
+def insert_sale_details(cursor, sale_ids):
     sale_detail_data = []
     for sale_id in sale_ids:
-        for product_id in product_ids:
-            quantity = int(input(f"Enter Quantity for SaleID {sale_id} and ProductID {product_id}: "))
-            price = float(input(f"Enter Price for SaleID {sale_id} and ProductID {product_id}: "))
+        while True:
+            product_id = input(f"Enter ProductID for SaleID {sale_id} (or 'done' to finish): ")
+            if product_id.lower() == 'done':
+                break
+            
+            product_id = int(product_id)
+            
+            # Fetch product price from the database
+            cursor.execute("SELECT Price, StockLevel FROM Products WHERE ProductID = %s", (product_id,))
+            result = cursor.fetchone()
+            
+            if not result:
+                print(f"No product found with ProductID {product_id}")
+                continue
+            
+            price, stock_level = result
+            
+            quantity = int(input(f"Enter Quantity for ProductID {product_id}: "))
+            
+            if quantity > stock_level:
+                print(f"Stock not available. Only {stock_level} units in stock.")
+                continue
+            
+            total_price = price * quantity
+            cursor.execute("UPDATE Products SET StockLevel = StockLevel - %s WHERE ProductID = %s", (quantity, product_id))
+            
             sale_detail_data.append((sale_id, product_id, quantity, price))
     
     insert_sale_detail_query = """
@@ -63,6 +86,7 @@ def insert_sale_details(cursor, sale_ids, product_ids):
 
 def main():
     try:
+        # Connect to PostgreSQL
         connection = psycopg2.connect(
             user="postgres",
             password="54321",
@@ -73,12 +97,12 @@ def main():
         cursor = connection.cursor()
         print("Successfully connected to the database")
 
+        # Insert customers and sales records
         customer_ids = insert_customers(cursor)
-        product_ids = [1, 2, 3, 4]  # Assuming you already have product IDs
         
         if customer_ids:
             sale_ids = insert_sales(cursor, customer_ids)
-            insert_sale_details(cursor, sale_ids, product_ids)
+            insert_sale_details(cursor, sale_ids)
 
         connection.commit()
         print("Data inserted successfully into Customers, Sales, and SaleDetails tables")

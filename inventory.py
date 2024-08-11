@@ -9,7 +9,8 @@ def insert_products(cursor):
             break
         category = input("Enter Category: ")
         price = float(input("Enter Price: "))
-
+        
+        # Validate stock level input to accept float values
         while True:
             try:
                 stock_level = float(input("Enter Stock Level: "))
@@ -75,6 +76,7 @@ def insert_inventory(cursor, product_ids):
 
 def main():
     try:
+        # Connect to PostgreSQL
         connection = psycopg2.connect(
             user="postgres",
             password="54321",
@@ -85,6 +87,7 @@ def main():
         cursor = connection.cursor()
         print("Successfully connected to the database")
 
+        # Insert products, suppliers, and inventory records
         product_ids = insert_products(cursor)
         supplier_ids = insert_suppliers(cursor)
         
