@@ -88,11 +88,11 @@ def main():
     try:
         # Connect to PostgreSQL
         connection = psycopg2.connect(
-            user="postgres",
-            password="54321",
+            user="yourusername",
+            password="youruserpassword",
             host="localhost",
             port="5432",
-            database="salesInventory"
+            database="yourdatabasename"
         )
         cursor = connection.cursor()
         print("Successfully connected to the database")

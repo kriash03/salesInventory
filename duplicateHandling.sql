@@ -76,3 +76,6 @@ WHERE InventoryID IN (
     FROM DuplicateInventory
     WHERE row_num > 1
 );
+
+
+

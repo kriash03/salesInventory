@@ -57,3 +57,5 @@ CREATE TABLE IF NOT EXISTS Inventory (
     FOREIGN KEY (ProductID) REFERENCES Products(ProductID),
     FOREIGN KEY (SupplierID) REFERENCES Suppliers(SupplierID)
 );
+
+
