@@ -1,2 +1,2 @@
 import os
-os.system("PGPASSWORD='54321' psql -h localhost -U postgres -d salesInventory -f dataQueries.sql")
+os.system("PGPASSWORD='userpassword' psql -h localhost -U userName -d databas_name -f dataQueries.sql")
